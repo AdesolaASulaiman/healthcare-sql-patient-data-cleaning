@@ -1,5 +1,4 @@
 # Healthcare Data Cleaning and Quality Assurance Using PostgreSQL
-
 ### Case Study 1: Patient Contact Number Cleaning and Standardisation
 
 **Tools:** PostgreSQL | pgAdmin | SQL | Data Profiling | Data Cleaning | Data Quality Validation
