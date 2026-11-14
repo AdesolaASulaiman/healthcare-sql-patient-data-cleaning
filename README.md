@@ -1,237 +1,302 @@
-# healthcare-sql-patient-data-cleaning
-PostgreSQL healthcare data cleaning portfolio demonstrating patient contact number profiling, extension extraction, standardisation, and lossless validation across 30,000 records.
 # Healthcare Data Cleaning and Quality Assurance Using PostgreSQL
 
 ### Case Study 1: Patient Contact Number Cleaning and Standardisation
 
-**Tools:** PostgreSQL | pgAdmin | SQL | Data Cleaning | Data Profiling | Data Quality Validation
+**Tools:** PostgreSQL | pgAdmin | SQL | Data Profiling | Data Cleaning | Data Quality Validation
 
-**Project Type:** Healthcare Data Analytics Portfolio
+**Dataset:** 30,000 patient records
 
-**Dataset:** 30,000 Patient Records
+**Project Status:** Completed and validated against the tested quality rules
+
+---
 
 ## Project Overview
 
-Accurate patient information is essential for effective healthcare administration, communication and reliable data analysis. However, even when a database appears complete, inconsistencies in how information is recorded can affect its usefulness.
+Reliable healthcare data begins with accurate and well-structured patient information. Even when a database has no missing values or duplicate identifiers, inconsistencies in how information is recorded can affect reporting, system integration and administrative processes.
 
-In this project, I used PostgreSQL to investigate and improve the structure of patient contact information in a hospital database containing 30,000 records.
+In this project, I used PostgreSQL to investigate and standardise patient contact information in a healthcare database containing 30,000 records.
 
-My initial data-quality assessment showed that patient identifiers were unique, key demographic fields were complete, and no obvious date or whitespace problems were present.
+During the initial assessment, I identified 17,926 contact numbers (59.75%) containing characters outside the preliminary validation pattern.
 
-However, further investigation revealed that 17,926 contact numbers, representing 59.75% of the dataset, contained characters outside the initial telephone-format screening rules.
+Rather than immediately classifying these records as invalid, I investigated their structure and discovered that the affected numbers consistently used an `x` followed by digits to represent a telephone extension.
 
-Rather than immediately deleting or replacing these values, I investigated the underlying cause.
+I developed a non-destructive SQL cleaning solution that separates the main telephone number from its extension while preserving the original value.
 
-I discovered that the affected records consistently contained telephone extensions written using the letter `x` followed by additional digits.
+The final validation confirmed that all 30,000 patient records were retained, 17,926 extensions were extracted, and every original contact string could be reconstructed exactly.
 
-This finding became the foundation for a practical SQL data-cleaning solution.
-
-## Business Problem
-
-Healthcare organisations rely on accurate contact information for appointment coordination, patient communication and administrative processes.
-
-When telephone numbers and extensions are stored together in one field, they can create problems for data validation, system integration and reporting.
-
-The main business question was:
-
-**How can patient contact numbers be standardised without losing important information or changing the original records?**
-
-My objectives were to:
-
-- Assess the completeness, uniqueness and consistency of patient records.
-- Identify potentially invalid or inconsistent telephone-number formats.
-- Investigate the causes of formatting exceptions.
-- Separate telephone numbers from extensions using SQL.
-- Preserve the original data for auditing and traceability.
-- Validate the accuracy and completeness of the transformation.
-
-## Dataset Description
-
-The analysis used the `patient` table from a PostgreSQL healthcare database.
-
-| Column | Description |
-|---|---|
-| patient_id | Unique patient identifier |
-| gender | Recorded patient gender |
-| date_of_birth | Patient date of birth |
-| blood_group | Recorded blood group |
-| city | Patient city |
-| contact_number | Patient contact information |
-
-The dataset contained 30,000 patient records.
-
-The original table was preserved throughout the cleaning process. A separate PostgreSQL schema was used to store the cleaned data view.
-
-## My Approach
-
-### 1. Data Profiling and Quality Assessment
-
-I started by examining the structure and content of the patient table.
-
-Using PostgreSQL queries, I assessed missing values, duplicate identifiers, date validity, demographic categories and whitespace inconsistencies.
-
-The initial assessment confirmed:
-
-- 30,000 unique patient identifiers.
-- No missing values in the assessed fields.
-- No future birth dates or birth dates implying ages over 120.
-- No leading or trailing whitespace in the tested text fields.
-- Consistently labelled gender and blood group categories.
-
-These results showed that the dataset had strong foundational quality, but further investigation was needed to assess telephone-number formatting.
-
-### 2. Identifying Contact Number Inconsistencies
-
-I used SQL regular expressions and string functions to examine contact-number patterns.
-
-The analysis identified:
-
-- 17,926 contact numbers containing characters outside the initial screening pattern.
-- 4,821 contact numbers containing more than 15 numeric digits when extensions were included.
-- Contact strings ranging from 10 to 22 characters.
-
-Instead of treating these records as invalid, I examined the formatting patterns more closely.
-
-### 3. Investigating the Root Cause
-
-Further SQL analysis showed that all 17,926 flagged contact numbers followed an `x`-extension pattern.
-
-This explained why the initial validation had flagged so many records.
-
-The problem was not necessarily incorrect telephone information. It was that the main telephone number and extension were stored together.
-
-This investigation reinforced an important lesson from the project: **data-quality issues should be understood before cleaning rules are applied.**
-
-### 4. Implementing the SQL Cleaning Solution
-
-I created a reusable PostgreSQL view named:
-
-`cleaning.patient_cleaned`
-
-The view separates the contact information into structured fields:
-
-| Field | Purpose |
-|---|---|
-| contact_number | Preserves the original value |
-| main_phone_original | Stores the main number before the extension |
-| main_phone_digits | Stores the main number in digits-only format |
-| phone_extension | Stores the extracted extension |
-| phone_quality_status | Records the preliminary format-validation result |
-
-I used Common Table Expressions (CTEs), `CASE` statements, `REGEXP_REPLACE`, `SUBSTRING` and conditional logic to implement the transformation.
-
-The solution was non-destructive. No original patient records were updated or deleted.
-
-### 5. Post-Cleaning Validation
-
-After creating the cleaned view, I performed additional SQL checks to verify that the transformation worked correctly.
-
-The validation focused on record preservation, identifier uniqueness, extension extraction, main-number length and exact reconstruction of the original contact strings.
-
-## Results and Key Achievements
+## Key Project Results
 
 | Performance Indicator | Verified Result |
 |---|---:|
-| Patient records processed | 30,000 |
-| Unique patient IDs preserved | 30,000 |
-| Contact extensions identified and extracted | 17,926 |
-| Main telephone digit lengths | 10–13 |
+| Patient records assessed | 30,000 |
+| Unique patient identifiers preserved | 30,000 |
+| Contact numbers initially flagged | 17,926 |
+| Percentage initially flagged | 59.75% |
+| Telephone extensions extracted | 17,926 |
+| Main telephone digit length after parsing | 10–13 |
 | Records passing preliminary length validation | 30,000 |
 | Original contact strings reconstructed exactly | 30,000 |
 | Reconstruction mismatches | 0 |
 | Invalid extracted extension formats | 0 |
 
-**Key achievement:** Successfully separated 17,926 telephone extensions while retaining all 30,000 patient records and achieving 100% exact reconstruction under the tested rules.
+**Key achievement:** I successfully separated 17,926 telephone extensions using PostgreSQL while preserving all 30,000 patient records and achieving zero reconstruction mismatches under the tested rules.
 
-The transformation improved the structure of the contact information without removing or overwriting the original data.
+## Business Problem
 
-The validation confirms structural consistency and preservation of information; it does not independently verify that the telephone numbers are active or reachable.
+Healthcare organisations depend on reliable contact information for patient communication, appointment administration and integration between information systems.
 
-## SQL Skills Demonstrated
+When telephone numbers and extensions are stored together, automated validation may incorrectly flag otherwise usable records.
 
-This project demonstrates practical experience in:
+The business question guiding this project was:
 
-- **SQL Data Cleaning:** Preparing and standardising data for analysis.
-- **Data Profiling:** Identifying patterns, inconsistencies and potential data-quality issues.
-- **Data Quality Assurance:** Testing completeness, uniqueness, validity and consistency.
-- **PostgreSQL:** Writing and executing SQL queries in pgAdmin.
-- **Common Table Expressions (CTEs):** Organising multi-stage transformations.
-- **Regular Expressions:** Identifying and extracting telephone-number patterns.
-- **Data Transformation:** Creating structured fields from composite text values.
-- **Data Validation:** Confirming transformation accuracy using SQL checks.
-- **Root Cause Analysis:** Investigating why records failed initial quality rules.
-- **Data Integrity:** Preserving source records and validating transformed outputs.
-- **Exception Handling:** Distinguishing genuine data issues from expected formatting conventions.
-- **Technical Documentation:** Recording methodology, results and analytical limitations.
+**How can patient contact information be standardised while maintaining data integrity and preserving the original records?**
 
-## Business Value
+My objectives were to:
 
-This project demonstrates how SQL can improve the usability and reliability of healthcare administrative data.
+- Assess patient data completeness, uniqueness and validity.
+- Identify inconsistencies in contact-number formatting.
+- Investigate the underlying causes of flagged records.
+- Develop a reusable SQL cleaning transformation.
+- Separate telephone extensions from main numbers.
+- Validate the transformation using measurable quality checks.
+- Document the methodology, findings and limitations.
 
-By separating main telephone numbers and extensions, the cleaned dataset provides more structured information for downstream applications.
+## Explore the SQL Project
 
-The approach also reduces the risk of incorrectly rejecting records simply because their formatting differs from an initial validation rule.
+The following files contain the SQL scripts and documentation for this case study.
 
-Most importantly, the project demonstrates a controlled data-cleaning process in which the original information remains available for verification.
+| Project File | Description |
+|---|---|
+| [01 — Patient Data Profiling](01_patient_profiling.sql) | Initial completeness, uniqueness and data-quality assessment |
+| [02 — Category and Contact Diagnostics](02_category_and_contact_diagnostics.sql) | Investigation of demographic values and telephone-number patterns |
+| [03 — SQL Cleaning Transformation](03_create_cleaned_patient_view.sql) | Creation of the cleaned patient view and telephone-extension extraction |
+| [04 — Post-Cleaning Validation](04_post_cleaning_validation.sql) | Record preservation, format validation and reconstruction checks |
+| [Results and Cleaning Log](results_and_cleaning_log.md) | Documented findings, cleaning decisions and validation outcomes |
 
-## Project Files
+## Repository Structure
 
-The repository contains the SQL scripts and supporting documentation used for the case study.
+The current GitHub repository contains the following files:
 
 ```text
-healthcare-patient-contact-cleaning/
+healthcare-sql-patient-data-cleaning/
 │
 ├── README.md
 │
-├── sql/
-│   ├── 01_patient_profiling.sql
-│   ├── 02_category_and_contact_diagnostics.sql
-│   ├── 03_create_cleaned_patient_view.sql
-│   └── 04_post_cleaning_validation.sql
+├── 01_patient_profiling.sql
+├── 02_category_and_contact_diagnostics.sql
+├── 03_create_cleaned_patient_view.sql
+├── 04_post_cleaning_validation.sql
 │
-└── docs/
-    └── results_and_cleaning_log.md
+└── results_and_cleaning_log.md
 ```
 
-### How to Reproduce the Analysis
+The scripts are organised numerically to make the analytical workflow easy to follow.
 
-1. Set up PostgreSQL and pgAdmin.
-2. Load an authorised dataset containing the required `public.patient` table.
-3. Run the SQL scripts in numerical order.
-4. Create the cleaned patient view in the `cleaning` schema.
-5. Execute the validation queries.
-6. Compare the results with the documented findings.
+## Dataset Description
 
-The repository does not include raw patient contact information or database credentials.
+The analysis used the `public.patient` table from a PostgreSQL healthcare database.
+
+| Column | Description |
+|---|---|
+| `patient_id` | Unique patient identifier |
+| `gender` | Recorded patient gender |
+| `date_of_birth` | Patient date of birth |
+| `blood_group` | Recorded blood group |
+| `city` | Patient city |
+| `contact_number` | Original patient contact information |
+
+The original dataset contained 30,000 patient records.
+
+To protect data integrity, I performed the cleaning in a separate PostgreSQL schema rather than modifying the source table.
+
+## Methodology
+
+### Step 1 — Data Profiling
+
+I began by assessing the structure and quality of the patient table using SQL queries.
+
+The profiling process included:
+
+- Missing-value checks using `IS NULL`.
+- Duplicate detection using `COUNT(DISTINCT)`.
+- Date-of-birth validity checks.
+- Category consistency analysis.
+- Whitespace checks using `BTRIM`.
+- Contact-number length and character analysis.
+
+**Findings:**
+
+The patient table contained 30,000 unique patient identifiers, with no missing values in the assessed fields.
+
+The initial checks also identified no future birth dates, birth dates implying ages over 120, or leading and trailing whitespace in the tested text fields.
+
+These findings provided a reliable starting point for further analysis.
+
+### Step 2 — Contact Number Quality Assessment
+
+I used SQL regular expressions and string functions to identify contact numbers containing unexpected characters or unusual lengths.
+
+The investigation identified:
+
+- 17,926 records containing characters outside the initial screening pattern.
+- 4,821 contact numbers containing more than 15 numeric digits when extensions were included.
+- Contact strings ranging from 10 to 22 characters.
+
+These results suggested potential formatting inconsistencies but did not establish that the telephone numbers were invalid.
+
+### Step 3 — Root Cause Investigation
+
+I examined the patterns responsible for the validation exceptions.
+
+Further analysis showed that the 17,926 flagged records consistently used the `x`-extension format.
+
+The main telephone-number portions contained between 10 and 13 digits.
+
+This indicated that the initial screening was flagging a recognised extension convention rather than necessarily identifying incorrect telephone information.
+
+**Key lesson:** An unusual format is not automatically a data error. Effective data cleaning requires understanding the underlying pattern before applying transformations.
+
+### Step 4 — SQL Data Cleaning and Standardisation
+
+I created a reusable PostgreSQL view:
+
+`cleaning.patient_cleaned`
+
+The transformation separated the original contact information into structured fields.
+
+| Output Field | Purpose |
+|---|---|
+| `contact_number` | Preserves the original contact string |
+| `main_phone_original` | Retains the main telephone portion before the extension |
+| `main_phone_digits` | Provides a digits-only representation of the main number |
+| `phone_extension` | Stores the extracted extension digits |
+| `phone_quality_status` | Records the preliminary format-validation outcome |
+
+The transformation used:
+
+- Common Table Expressions (CTEs).
+- `CASE` expressions.
+- `REGEXP_REPLACE`.
+- `SUBSTRING`.
+- `BTRIM`.
+- PostgreSQL views.
+- Conditional data-quality rules.
+
+The original patient records were not overwritten or deleted.
+
+### Step 5 — Post-Cleaning Validation
+
+After creating the cleaned view, I executed SQL validation queries to confirm that the transformation preserved the data correctly.
+
+The validation checked:
+
+1. Total records retained.
+2. Unique patient identifiers.
+3. Telephone extensions extracted.
+4. Main telephone digit lengths.
+5. Preliminary format-validation results.
+6. Exact reconstruction of original contact strings.
+7. Invalid extension formats.
+
+All 30,000 records passed the preliminary main-number length check.
+
+A separate reconstruction test confirmed that all 30,000 original contact strings could be reconstructed exactly from the parsed components, with zero mismatches.
+
+This demonstrated that the transformation preserved the original contact information under the tested reconstruction rule.
+
+## Before-and-After Data Quality Assessment
+
+| Quality Measure | Before Cleaning | After Cleaning |
+|---|---|---|
+| Patient records | 30,000 | 30,000 retained |
+| Unique patient identifiers | 30,000 | 30,000 preserved |
+| Composite phone and extension values | 17,926 | Extensions separated |
+| Main phone number field | Not separately available | Structured digits-only field |
+| Extension field | Not separately available | 17,926 extracted |
+| Main phone length validation | Not independently assessed | 30,000 passed |
+| Exact reconstruction | Not applicable | 30,000 matched |
+| Information loss | Not assessed | Zero reconstruction mismatches |
+
+The before-and-after checks measure different aspects of data quality. The results demonstrate successful parsing and structural standardisation, not independent verification that every telephone number is genuine or reachable.
+
+## Business Value
+
+This project demonstrates how SQL can improve the structure and usability of healthcare administrative data.
+
+**Improved data structure:** Main telephone numbers and extensions are available as separate fields, supporting downstream processing.
+
+**Reduced false validation alerts:** Recognised extension notation is handled explicitly instead of being automatically treated as invalid.
+
+**Preserved data integrity:** The original contact information remains available for auditing and verification.
+
+**Reproducible cleaning:** The PostgreSQL view can be reused when the underlying patient table is queried.
+
+**Evidence-based decision-making:** Cleaning rules were developed after investigating the source of the formatting exceptions.
+
+## Technical Skills Demonstrated
+
+| Skill | Application |
+|---|---|
+| SQL and PostgreSQL | Database querying and transformation |
+| Data Profiling | Completeness, uniqueness and format checks |
+| Data Cleaning | Telephone-number parsing and standardisation |
+| Data Quality Assurance | Validation of transformed records |
+| Regular Expressions | Pattern detection and extension extraction |
+| Common Table Expressions | Organising multi-stage transformations |
+| SQL Views | Creating reusable, non-destructive data outputs |
+| Data Integrity | Source preservation and reconstruction testing |
+| Root Cause Analysis | Investigating initial validation exceptions |
+| Data Validation | Quantifying post-transformation outcomes |
+| Technical Documentation | Recording methods, results and limitations |
+
+## How to Reproduce the Project
+
+1. Install PostgreSQL and pgAdmin.
+2. Load an authorised healthcare dataset containing a compatible `public.patient` table.
+3. Review the profiling and diagnostic SQL scripts.
+4. Execute the cleaning transformation script.
+5. Create the `cleaning.patient_cleaned` view.
+6. Run the post-cleaning validation script.
+7. Compare the results with the documented cleaning log.
+
+The scripts were curated from the completed PostgreSQL workflow and should be rerun against the source database when independently reproducing the project.
+
+No raw patient contact data or database credentials are included in this repository.
 
 ## Challenges and Lessons Learned
 
-One of the most valuable lessons from this project was understanding the difference between an unusual data format and an actual data error.
+The most significant challenge was distinguishing genuine data-quality problems from expected formatting conventions.
 
-At first, the large number of flagged contact records suggested a significant data-quality problem.
+The initial screening identified 17,926 potentially problematic records, which appeared to indicate a widespread formatting issue.
 
-However, deeper investigation revealed that the records followed a consistent telephone-extension convention.
+However, the investigation showed that these records followed a consistent telephone-extension pattern.
 
-By investigating before transforming, I was able to develop a solution that preserved the original information while improving its structure.
+Instead of deleting or replacing the values, I designed a transformation that separated their components while retaining the original information.
 
-This experience strengthened my understanding of SQL data profiling, root-cause analysis, data integrity and validation.
+This experience strengthened my practical understanding of data profiling, SQL transformation, root-cause analysis, data integrity and quality validation.
+
+It also reinforced the importance of testing cleaning outcomes rather than assuming that a transformation has worked correctly.
 
 ## Project Limitations
 
-The analysis was conducted using a healthcare demonstration dataset whose real-world provenance has not been independently verified.
+This project uses a healthcare demonstration dataset whose real-world provenance has not been independently verified.
 
-Telephone-number validation was limited to structural formatting and digit lengths. Country-specific numbering rules, ownership and reachability were not assessed.
+The telephone-number validation focuses on structural formatting and digit lengths. It does not verify telephone-number ownership, reachability or compliance with country-specific numbering plans.
 
-The SQL scripts are documented reconstructions of the completed PostgreSQL workflow and should be rerun against the source database when reproducing the project.
+The documented reconstruction test establishes exact preservation under the tested extension convention. Further checks may be required for other telephone-number formats.
+
+The results represent the completed case-study workflow and should not be interpreted as a certified assessment of a live healthcare organisation.
 
 ## Conclusion
 
-This case study demonstrates my ability to use PostgreSQL to investigate data-quality issues, develop practical SQL transformations and validate the results.
+This project demonstrates my ability to use PostgreSQL to investigate data-quality issues, develop practical SQL cleaning solutions and validate transformation results.
 
-By combining data profiling, root-cause analysis, non-destructive cleaning and post-transformation testing, I produced a more structured patient contact dataset while preserving all original records.
+By combining data profiling, regular-expression analysis, non-destructive transformation and post-cleaning validation, I improved the structure of 30,000 patient contact records while preserving their original information.
 
-The project forms the first part of my wider **Healthcare Data Quality Engineering Portfolio**, which will also cover hospital admissions, billing reconciliation, insurance records and bed-assignment integrity.
+The project forms **Case Study 1 of my Healthcare Data Quality Engineering Portfolio**.
+
+Future case studies will examine hospital admission integrity, billing reconciliation, insurance policy validation and hospital bed-assignment consistency.
 
 ---
 
-**Core Competencies:** SQL | PostgreSQL | Healthcare Data Analytics | Data Cleaning | Data Quality Assurance | Data Validation | Data Transformation | Data Integrity | Data Profiling | Data Standardisation | Root Cause Analysis | Database Management
+**Core Skills:** SQL | PostgreSQL | Healthcare Data Analytics | Data Cleaning | Data Quality Assurance | Data Profiling | Data Transformation | Data Validation | Data Integrity | Data Standardisation | Root Cause Analysis | Database Management
