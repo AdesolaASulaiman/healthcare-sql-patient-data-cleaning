@@ -132,7 +132,7 @@ The scenarios include:
 
 The synthetic test is separate from the patient dataset. Its outcomes should be interpreted from the actual pgAdmin execution results, including any unsupported or failed scenarios.
 
-**SQL file:** [05_synthetic_edge_case tests.sql](05_synthetic_edge_case tests.sql)
+**SQL file:** [05_synthetic_edge_case tests.sql](05_synthetic_edge_case_tests.sql)
 
 ## 5. pgAdmin SQL Execution Evidence
 
@@ -172,9 +172,9 @@ Provides the output of the digits-only transformation consistency check. The num
 
 ### Evidence 5: Synthetic Edge-Case Testing
 
-![Synthetic SQL edge-case test results](05_synthetic edge_case tests.PNG)
+![Synthetic SQL edge-case test results](05_synthetic_edge_case_tests.PNG)
 
-[View synthetic edge-case testing screenshot](05_synthetic edge_case tests.PNG)
+[View synthetic edge-case testing screenshot](05_synthetic_edge_case_tests.PNG)
 
 Documents the execution of additional test scenarios using fabricated telephone values.
 
