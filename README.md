@@ -172,9 +172,9 @@ Provides the output of the digits-only transformation consistency check. The num
 
 ### Evidence 5: Synthetic Edge-Case Testing
 
-![Synthetic SQL edge-case test results](05_synthetic_edge_case_tests.PNG)
+![Synthetic SQL edge-case test results](05_synthetic edge_case_tests.PNG)
 
-[View synthetic edge-case testing screenshot](05_synthetic_edge_case_tests.PNG)
+[View synthetic edge-case testing screenshot](05_synthetic edge_case_tests.PNG)
 
 Documents the execution of additional test scenarios using fabricated telephone values.
 
