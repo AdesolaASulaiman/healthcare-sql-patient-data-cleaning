@@ -18,8 +18,6 @@ Further investigation showed that these records contained telephone extensions u
 
 I developed a non-destructive PostgreSQL cleaning view to separate telephone numbers from extensions, standardise the numeric component and preserve the original source values.
 
-The project demonstrates a practical data-quality workflow:
-
 **Data Profiling → Root-Cause Investigation → SQL Cleaning → Validation → Documentation**
 
 ## 2. Business Problem
@@ -172,11 +170,11 @@ Provides the output of the digits-only transformation consistency check. The num
 
 ### Evidence 5: Synthetic Edge-Case Testing
 
-![Synthetic SQL edge_case_test_results](05_synthetic_edge_case_tests.PNG)
+![Synthetic SQL edge-case test results](05_synthetic_edge_case_tests.PNG)
 
-[View synthetic_edge_case_testing_screenshot](05_synthetic_edge_case_tests.PNG)
+[View synthetic edge-case testing screenshot](05_synthetic_edge_case_tests.PNG)
 
-Documents the execution of additional test scenarios using fabricated telephone values.
+Documents the additional test scenarios using fabricated telephone values.
 
 The purpose is to identify both correctly handled formats and limitations requiring additional cleaning rules. The screenshot should not be treated as evidence that every test passed without reviewing its actual results.
 
