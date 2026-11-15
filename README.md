@@ -39,7 +39,7 @@ The cleaned view retains `contact_number` and adds `main_phone_original`, `main_
 | [03 — Cleaning view](03_create_cleaned_patient_view.sql) | Non-destructive parsing and standardisation |
 | [04 — Validation](04_post_cleaning_validation.sql) | Preservation and reconstruction checks |
 | [Cleaning log](results_and_cleaning_log.md) | Decisions, results and limitations |
-| [05 — Synthetic edge-case tests](05_synthetic_edge_case_tests.sql) | Additional proposed tests using fabricated values; **run locally before reporting outcomes** |
+| [05 — Synthetic edge-case tests](05_synthetic_edge_case_tests.sql) | Additional proposed tests using fabricated values; 
 
 ## pgAdmin execution evidence
 
