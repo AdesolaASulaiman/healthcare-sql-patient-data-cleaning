@@ -61,7 +61,7 @@ healthcare-sql-patient-data-cleaning/
 ├── 02_category_and_contact_diagnostics.sql
 ├── 03_create_cleaned_patient_view.sql
 ├── 04_post_cleaning_validation.sql
-├── 05_synthetic_edge_case_tests.sql       # add with this update
+├── 05_synthetic_edge_case_tests.sql     
 ├── results_and_cleaning_log.md
 ├── 01_patient_data_profiling.PNG
 ├── 02_contact_format_diagnostics.PNG
